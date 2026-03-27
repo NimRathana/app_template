@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../core/constants/api_constants.dart';
 
 class ApiService {
-  static const baseUrl = "http://192.168.18.11:8000";
+  static final baseUrl = ApiConstants.baseUrl;
 
   static Future<String?> login(String username, String password) async {
     try {

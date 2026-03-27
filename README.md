@@ -26,8 +26,8 @@ dart run change_app_package_name:main $packageName
 
 ===== UPDATE ALL IMPORTS =====
 
-Get-ChildItem -Recurse -Include *.dart | ForEach-Object {
-    (Get-Content $_.FullName) -replace "package:$oldName", "package:$newName" | Set-Content $_.FullName
+Get-ChildItem -Recurse -Include *.dart,*.yaml,*.c,*.h,*.cpp,*.rc,*.plist,*.swift,*.mm | ForEach-Object {
+    (Get-Content $_.FullName) -replace 'rathana_app', 'Modern App' | Set-Content $_.FullName
 }
 
 ===== RENAME PROJECT FOLDER =====
@@ -36,14 +36,10 @@ cd ..
 Rename-Item $oldName $newName
 cd $newName
 
-===== Command to Replace All `recruitment_mobile` =====
-
-Get-ChildItem -Recurse -Include *.dart,*.yaml,*.c,*.h,*.cpp,*.rc,*.plist,*.swift,*.mm | ForEach-Object {
-    (Get-Content $_.FullName) -replace 'recruitment_mobile', 'Modern App' | Set-Content $_.FullName
-}
-
 ===== CLEAN PROJECT =====
 
 flutter clean
 flutter pub get
+flutter pub run flutter_launcher_icons:main
+flutter build apk **--release**
 flutter run

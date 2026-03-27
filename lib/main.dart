@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:modern_app/shared/constants.dart';
-import 'package:modern_app/storage/storage_keys.dart';
+import 'package:rathana_app/core/constants/storage_keys.dart';
+import 'package:rathana_app/views/bottom_navigation/settings_view.dart';
 import 'bindings/auth_binding.dart';
 import 'controllers/setting_controller.dart';
+import 'core/themes/app_theme.dart';
 import 'translate/AppTranslations.dart';
-import 'views/bottom_navigation/appearance_view.dart';
-import 'views/login_view.dart';
-import 'views/home_view.dart';
 import 'routes/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  const env = String.fromEnvironment('ENV', defaultValue: 'dev');
+  await dotenv.load(
+    fileName: env == 'prod' ? '.env.prod' : '.env.dev',
+  );
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp
   ]);
@@ -32,22 +35,20 @@ class MyApp extends StatelessWidget {
     final SettingController settingController = Get.find();
     final isDark = settingController.isDarkMode.value ?? false;
     final selectedColor = settingController.selectedColor.value;
+    final selectedLang = settingController.selectedLanguage.value;
+    final selectedLocale = SettingsView.languages.firstWhere((lang) => lang['name'] == selectedLang, orElse: () => {'locale': Locale('en', 'US')})['locale'] as Locale;
     return Obx(() {
       return GetMaterialApp(
         debugShowCheckedModeBanner: false,
         initialBinding: AuthBinding(),
         initialRoute: firstPage,
         translations: AppTranslations(),
-        locale: const Locale('en', 'US'),
+        locale: selectedLocale,
         fallbackLocale: const Locale('en', 'US'),
         themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
         theme: lightTheme(selectedColor),
         darkTheme: darkTheme(selectedColor),
-        getPages: [
-          GetPage(name: Routes.login, page: () => LoginView()),
-          GetPage(name: Routes.home, page: () => HomeView()),
-          GetPage(name: Routes.appearance, page: () => AppearanceView()),
-        ],
+        getPages: AppPages.routes,
       );
     });
   }

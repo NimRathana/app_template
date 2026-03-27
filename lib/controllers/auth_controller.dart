@@ -1,8 +1,9 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:rathana_app/core/utils/helper.dart';
 import '../services/auth_service.dart';
 import '../routes/app_routes.dart';
-import '../storage/storage_keys.dart';
+import '../core/constants/storage_keys.dart';
 
 class AuthController extends GetxController {
   final box = GetStorage();
@@ -38,7 +39,7 @@ class AuthController extends GetxController {
       box.write(StorageKeys.token, result);
       Get.offAllNamed(Routes.home);
     } else {
-      Get.snackbar("Error", "Invalid login");
+      Helper.errorSnackbar("Invalid Login");
     }
   }
 

@@ -1,0 +1,74 @@
+name: Recruitment App
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      # Force Node.js 24 for deprecated actions
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Setup Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      # 3️⃣ Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4️⃣ Analyze code (warnings do not fail CI)
+      - name: Analyze code
+        run: flutter analyze --no-fatal-infos
+
+      # 5️⃣ Run tests if folder exists
+      - name: Run tests
+        run: |
+          if [ -d "test" ]; then
+            flutter test
+          else
+            echo "No tests found, skipping..."
+          fi
+
+      # 6️⃣ Build APK for Android
+      # - name: Build APK (Android)
+      #   run: flutter build apk --release
+
+      # 4️⃣ Build Flutter web
+      - name: Build Flutter Web
+        run: flutter build web --base-href /rathana_app/ --dart-define=ENV=prod
+
+      # 7️⃣ Build Web
+      - name: Build Web
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          # github_token: ${{ secrets.GH_PAT }}
+          publish_dir: build/web
+          publish_branch: develop
+
+      # 8️⃣ Upload APK artifact
+      # - name: Upload APK artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: app-release.apk
+      #     path: build/app/outputs/flutter-apk/app-release.apk
+
+      # 9️⃣ Upload Web artifact (Optional)
+      - name: Upload Web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: rathana_app/build/web

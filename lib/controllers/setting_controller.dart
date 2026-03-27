@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../shared/constants.dart';
-import '../storage/storage_keys.dart';
+import '../core/themes/app_theme.dart';
+import '../core/constants/storage_keys.dart';
 import 'package:get_storage/get_storage.dart';
 
 class SettingController extends GetxController {
@@ -50,7 +50,7 @@ class SettingController extends GetxController {
     saturation.value = box.read(StorageKeys.saturation) ?? 1.0;
     contrast.value = box.read(StorageKeys.contrast) ?? 1.0;
     fontSize.value = box.read(StorageKeys.fontSize) ?? 1.0;
-    selectedLanguage.value = box.read(StorageKeys.selectedLanguage) ?? 'Khmer';
+    selectedLanguage.value = box.read(StorageKeys.selectedLanguage) ?? 'English';
     inAppNotifications.value = box.read(StorageKeys.inAppNotifications) ?? true;
 
     // Listen to system brightness changes
